@@ -56,6 +56,7 @@
                             org.apache.sling.models.annotations.*;resolution:=optional, <!-- the used class InjectionStrategy is only since Sling Models API 1.2 -->
                             org.apache.sling.models.spi.injectorspecific.*;resolution:=optional, <!-- that package was added with Sling Models API 1.1 -->
                             com.amazonaws.*;resolution:=optional, <!-- only required for MCP S3 Ingestor -->
+                            com.microsoft.azure.*;resolution:=optional, <!-- only required for MCP Azure Asset Ingestor -->
                             com.github.jknack.handlebars;resolution:=optional, <!-- only required for Report Builder -->
                             com.day.cq.wcm.workflow.process;version="[6.0,8)", <!-- using a wider version range for forward compatibility -->
                             com.day.cq.mailer;version="[5.9,7)", <!-- using a wider version range for forward compatibility -->
@@ -315,6 +316,18 @@
             <version>1.10.76</version>
             <scope>provided</scope>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.microsoft.azure/azure-storage-blob -->
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-storage-blob</artifactId>
+            <version>10.0.4-rc</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.microsoft.azure/azure-storage -->
+        <dependency>
+            <groupId>com.microsoft.azure</groupId>
+            <artifactId>azure-storage</artifactId>
+            <version>8.0.0</version>
+        </dependency>
         <!-- Test Dependencies -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -449,6 +462,14 @@
                 <exclusion>
                     <groupId>com.amazonaws</groupId>
                     <artifactId>aws-java-sdk-s3</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.microsoft.azure</groupId>
+                    <artifactId>azure-storage</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.microsoft.azure</groupId>
+                    <artifactId>azure-storage-blob</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
