@@ -31,9 +31,7 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
 
 import com.microsoft.azure.storage.CloudStorageAccount;
-//import com.microsoft.azure.storage.blob.CloudBlobContainer;
-//import com.microsoft.azure.storage.CloudBlobClient;
-//import com.microsoft.azure.storage.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlobContainer;
 
 
 /**
@@ -89,8 +87,8 @@ public class AzureAssetIngestor extends AssetIngestor {
         try {
             String storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=acsazurestore;AccountKey=qjC6s44AmSbAkJ7Xqdsks/jjZDIYRTY8qgWKds8w8PXdL+Q08mU/yu3Oh/4wO3sYTwNgNiA6EG66gBRWBqMBNA==";
 
-            //CloudBlobContainer blobContainer = CloudStorageAccount.parse(storageConnectionString).createCloudBlobClient().getContainerReference("acsazurecontainer");
-            //LOG.info("\n\n******* Connected to Azure Blob Storage - blobContainer="+blobContainer);
+            CloudBlobContainer blobContainer = CloudStorageAccount.parse(storageConnectionString).createCloudBlobClient().getContainerReference("acsazurecontainer");
+            LOG.info("\n\n******* Connected to Azure Blob Storage - blobContainer="+blobContainer);
 
         } catch (Exception ex) {
             LOG.info("\n******* buildProcess Exception", ex);

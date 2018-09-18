@@ -56,7 +56,7 @@
                             org.apache.sling.models.annotations.*;resolution:=optional, <!-- the used class InjectionStrategy is only since Sling Models API 1.2 -->
                             org.apache.sling.models.spi.injectorspecific.*;resolution:=optional, <!-- that package was added with Sling Models API 1.1 -->
                             com.amazonaws.*;resolution:=optional, <!-- only required for MCP S3 Ingestor -->
-                            com.microsoft.azure.*;resolution:=optional, <!-- only required for MCP Azue Ingestor -->
+                            com.microsoft.azure.*;resolution:=optional, <!-- only required for MCP Azure Asset Ingestor -->
                             com.github.jknack.handlebars;resolution:=optional, <!-- only required for Report Builder -->
                             com.day.cq.wcm.workflow.process;version="[6.0,8)", <!-- using a wider version range for forward compatibility -->
                             com.day.cq.mailer;version="[5.9,7)", <!-- using a wider version range for forward compatibility -->
@@ -320,7 +320,7 @@
         <dependency>
             <groupId>com.microsoft.azure</groupId>
             <artifactId>azure-storage</artifactId>
-            <version>5.0.0</version>
+            <version>8.0.0</version>
             <scope>provided</scope>
         </dependency>
         <!-- Test Dependencies -->

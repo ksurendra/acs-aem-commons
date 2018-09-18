@@ -22,7 +22,6 @@ package com.adobe.acs.commons.mcp.impl.processes.asset;
 import com.adobe.acs.commons.mcp.AuthorizedGroupProcessDefinitionFactory;
 import com.adobe.acs.commons.mcp.ProcessDefinition;
 import com.adobe.acs.commons.mcp.ProcessDefinitionFactory;
-import com.amazonaws.services.s3.AmazonS3Client;
 import org.apache.felix.scr.annotations.Component;
 import org.apache.felix.scr.annotations.Reference;
 import org.apache.felix.scr.annotations.Service;
@@ -31,6 +30,9 @@ import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.commons.mime.MimeTypeService;
 import com.adobe.acs.commons.mcp.impl.processes.asset.AzureAssetIngestor;
 import com.microsoft.azure.storage.CloudStorageAccount;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
 
@@ -40,6 +42,8 @@ import java.security.InvalidKeyException;
 @Component
 @Service(ProcessDefinitionFactory.class)
 public class AzureAssetIngestorFactory extends AuthorizedGroupProcessDefinitionFactory<ProcessDefinition> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AzureAssetIngestorFactory.class);
 
     @Reference
     private transient MimeTypeService mimeTypeService;
@@ -59,15 +63,11 @@ public class AzureAssetIngestorFactory extends AuthorizedGroupProcessDefinitionF
         if (super.isAllowed(user)) {
             // check if Azure SDK is available
             try {
-                CloudStorageAccount storageAccount = CloudStorageAccount.parse("nothing");
+                CloudStorageAccount storageAccount;
                 return true;
             } catch (NoClassDefFoundError e) {
                 //ignore
-                e.printStackTrace();
-            } catch (URISyntaxException ex) {
-                //ignore
-            } catch(InvalidKeyException ie) {
-                //ignore
+                LOG.info("\n***NoClassDefFoundError - Azure CloudStorageAccount class not found");
             }
         }
         return false;
