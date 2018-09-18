@@ -21,6 +21,7 @@ package com.adobe.acs.commons.mcp.impl.processes.asset;
 
 import com.adobe.acs.commons.mcp.ProcessInstance;
 import com.adobe.acs.commons.mcp.form.FormField;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.HttpClient;
 import org.apache.http.osgi.services.HttpClientBuilderFactory;
 import org.apache.sling.api.resource.LoginException;
@@ -29,9 +30,12 @@ import org.apache.sling.commons.mime.MimeTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.jcr.RepositoryException;
+import java.security.InvalidKeyException;
 
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlobClient;
+import com.microsoft.azure.storage.blob.ListBlobItem;
 
 
 /**
@@ -60,6 +64,12 @@ public class AzureAssetIngestor extends AssetIngestor {
     String accountKey;
 
     @FormField(
+            name = "Container Name",
+            description = "Azure Blob Container Name"
+    )
+    String accountContainerName;
+
+    @FormField(
             name = "Connection timeout",
             description = "HTTP Connection timeout (in milliseconds)",
             required = true,
@@ -72,26 +82,52 @@ public class AzureAssetIngestor extends AssetIngestor {
     @Override
     public void init() throws RepositoryException {
         super.init();
-
-        //@TODO
     }
-
 
     @Override
     public void buildProcess(ProcessInstance instance, ResourceResolver rr) throws LoginException, RepositoryException {
         LOG.info("\n\n******* buildProcess");
 
-        String storageConnectionString1 = "DefaultEndpointsProtocol=http;"
-                                            + "AccountName="+accountName+";"
-                                            + "AccountKey="+accountKey;
         try {
-            String storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=acsazurestore;AccountKey=qjC6s44AmSbAkJ7Xqdsks/jjZDIYRTY8qgWKds8w8PXdL+Q08mU/yu3Oh/4wO3sYTwNgNiA6EG66gBRWBqMBNA==";
+            String storageConnectionString = "DefaultEndpointsProtocol=http;"
+                    + "AccountName="+accountName+";"
+                    + "AccountKey="+accountKey;
 
-            CloudBlobContainer blobContainer = CloudStorageAccount.parse(storageConnectionString).createCloudBlobClient().getContainerReference("acsazurecontainer");
+            //CloudBlobContainer blobContainer = CloudStorageAccount.parse(storageConnectionString).createCloudBlobClient().getContainerReference("acsazurecontainer");
+
+            CloudStorageAccount storageAccount = CloudStorageAccount.parse(storageConnectionString);
+
+            if (storageAccount==null) {
+                throw new Exception("Connection to Azure Storage Account Failed!");
+            }
+
+            CloudBlobClient blobClient = storageAccount.createCloudBlobClient();
+
+            if (blobClient==null) {
+                throw new Exception("Connection to Azure Storage Blob Client Failed!");
+            }
+
+            CloudBlobContainer blobContainer = blobClient.getContainerReference(accountContainerName);
+
+            if (blobContainer==null) {
+                throw new Exception("Connection to Azure Storage Blob Container Failed!");
+            }
+
             LOG.info("\n\n******* Connected to Azure Blob Storage - blobContainer="+blobContainer);
 
+            // Loop over blobs within the container and output the URI to each of them.
+            for (ListBlobItem blobItem : blobContainer.listBlobs()) {
+                LOG.info("\n\n******* blobItem.getUri()="+blobItem.getUri());
+            }
+
+        } catch(InvalidKeyException ex) {
+            LOG.info("\n******* Invalid credentials", ex);
         } catch (Exception ex) {
-            LOG.info("\n******* buildProcess Exception", ex);
+            LOG.info("\n******* buildProcess Exception", ex.getMessage());
         }
+    }
+
+    public void closeConnection() {
+
     }
 }
