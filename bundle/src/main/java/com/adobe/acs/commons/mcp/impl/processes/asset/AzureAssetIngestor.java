@@ -28,10 +28,13 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.commons.mime.MimeTypeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import javax.jcr.RepositoryException;
 
 import com.microsoft.azure.storage.CloudStorageAccount;
+//import com.microsoft.azure.storage.blob.CloudBlobContainer;
+//import com.microsoft.azure.storage.CloudBlobClient;
+//import com.microsoft.azure.storage.CloudBlobContainer;
+
 
 /**
  * Import assets and metadata provided by a spreadsheet
@@ -66,46 +69,31 @@ public class AzureAssetIngestor extends AssetIngestor {
     )
     private int timeout = 30000;
 
+    transient CloudStorageAccount storageAccount;
 
     @Override
     public void init() throws RepositoryException {
         super.init();
 
-        LOG.info("\n\n****** accessName, accessKey="+accountName+" , "+accountKey);
-
-        try {
-
-            String storageConnectionString = "DefaultEndpointsProtocol=http;"
-                    + "AccountName="+accountName+";"
-                    + "AccountKey="+accountKey;
-            CloudStorageAccount account = CloudStorageAccount.parse(storageConnectionString);
-            LOG.info("\n\n******* 1 account=" + account.toString());
-        } catch (Exception ex) {
-            LOG.info("\n\n******* init Exception", ex);
-        }
+        //@TODO
     }
 
 
     @Override
     public void buildProcess(ProcessInstance instance, ResourceResolver rr) throws LoginException, RepositoryException {
-        LOG.info("\n\n******* Entering buildProcess");
+        LOG.info("\n\n******* buildProcess");
 
-        String storageConnectionString = "DefaultEndpointsProtocol=http;"
+        String storageConnectionString1 = "DefaultEndpointsProtocol=http;"
                                             + "AccountName="+accountName+";"
                                             + "AccountKey="+accountKey;
         try {
-            CloudStorageAccount account = CloudStorageAccount.parse(storageConnectionString);
+            String storageConnectionString = "DefaultEndpointsProtocol=https;AccountName=acsazurestore;AccountKey=qjC6s44AmSbAkJ7Xqdsks/jjZDIYRTY8qgWKds8w8PXdL+Q08mU/yu3Oh/4wO3sYTwNgNiA6EG66gBRWBqMBNA==";
 
-            //CloudBlobClient serviceClient = account.createCloudBlobClient();
-            //LOG.info("\n\n******* serviceClient="+serviceClient.);
-
-            // Container name must be lower case.
-            //CloudBlobContainer container = serviceClient.getContainerReference("acsimages");
-            //container.createIfNotExists();
+            //CloudBlobContainer blobContainer = CloudStorageAccount.parse(storageConnectionString).createCloudBlobClient().getContainerReference("acsazurecontainer");
+            //LOG.info("\n\n******* Connected to Azure Blob Storage - blobContainer="+blobContainer);
 
         } catch (Exception ex) {
-            LOG.info("\n\n******* buildProcess Exception", ex);
+            LOG.info("\n******* buildProcess Exception", ex);
         }
     }
-
 }

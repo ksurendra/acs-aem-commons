@@ -30,6 +30,9 @@ import org.apache.http.osgi.services.HttpClientBuilderFactory;
 import org.apache.jackrabbit.api.security.user.User;
 import org.apache.sling.commons.mime.MimeTypeService;
 import com.adobe.acs.commons.mcp.impl.processes.asset.AzureAssetIngestor;
+import com.microsoft.azure.storage.CloudStorageAccount;
+import java.net.URISyntaxException;
+import java.security.InvalidKeyException;
 
 /**
  * Factory for asset import processes
@@ -54,13 +57,17 @@ public class AzureAssetIngestorFactory extends AuthorizedGroupProcessDefinitionF
     @Override
     public boolean isAllowed(User user) {
         if (super.isAllowed(user)) {
-            // check if S3 SDK is available
+            // check if Azure SDK is available
             try {
-                //new AmazonS3Client();
-                //@TODO Test Azure Data Store
+                CloudStorageAccount storageAccount = CloudStorageAccount.parse("nothing");
                 return true;
             } catch (NoClassDefFoundError e) {
-                // ignore
+                //ignore
+                e.printStackTrace();
+            } catch (URISyntaxException ex) {
+                //ignore
+            } catch(InvalidKeyException ie) {
+                //ignore
             }
         }
         return false;
